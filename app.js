@@ -1,39 +1,50 @@
 var fileSource = './source.mp4';
 var subtitleSource = './source.srt';
 
-var airplay = require('airplay');
-var browser = airplay.createBrowser();
-
 var http = require('http'),
     fs = require('fs'),
-    util = require('util');
+    util = require('util'),
+	OS = require('os'),
+	spawn = require('child_process').spawn,
+	airplay = require('airplay');
+	
+var browser = airplay.createBrowser();
  
-var spawn = require('child_process').spawn;
+var tmpDir = OS.tmpdir();
+var tmpFile = tmpDir + '/localTV.mp4';
 
-var ffmpeg = spawn('./ffmpeg', [
-	'-i', fileSource,
-	'-sub_charenc', 'CP1252',
-	'-i', subtitleSource,
-	'-map', '0:v',
-	'-map', '0:a',
-	'-c', 'copy',
-	'-map', '1',
-	'-c:s:0', 'mov_text',
-	'-metadata:s:s:0', 'language=esp',
-	'out2.mp4'
-]); 
-
-ffmpeg.on('close', function(){
-	console.log('Codificacion terminada');
-	initServer();
-})
+function init(){
+	console.log('Starting LocalTV');
+	
+	fs.exists(tmpFile, function(exists){
+		if(exists) fs.unlink(tmpFile)
+	});
+	
+	var ffmpeg = spawn('./ffmpeg', [
+		'-i', fileSource,
+		'-sub_charenc', 'CP1252',
+		'-i', subtitleSource,
+		'-map', '0:v',
+		'-map', '0:a',
+		'-c', 'copy',
+		'-map', '1',
+		'-c:s:0', 'mov_text',
+		'-metadata:s:s:0', 'language=esp',
+		tmpFile
+	]); 
+	
+	ffmpeg.on('close', function(){
+		console.log('Burning subtitle finished');
+		initServer();
+	})
+}
 
 function initServer(){
 	console.log('Starting http Server');
 	
 	http.createServer(function (req, res) {
 	
-		var path = 'out2.mp4';
+		var path = tmpFile;
 		var stat = fs.statSync(path);
 		var total = stat.size;
 		
@@ -69,3 +80,5 @@ function startStream(){
 	browser.start();
 	console.log('Staring stream to AppleTv');
 }
+
+init();
