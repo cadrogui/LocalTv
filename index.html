@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>LocalTV</title>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+
+<style>
+#localTV{
+	width:400px; height:400px; background:url(gui.png);
+}
+
+body{
+	margin-top:0;
+	margin-left:0;
+}
+
+#spinner{
+	position:absolute; margin-left:330px; margin-top:330px; width:50px; z-index:2; display:none
+}
+
+#streamingScr{
+	position:absolute; z-index:3; display:none;
+}
+</style>
+
+</head>
+<body>
+
+<div id="localTV">
+	
+    <img id="spinner" src="spinner.gif" />
+    <img id="streamingScr" src="streaming.png" />
+    
+    <div style="position:absolute; z-index:0;">
+        <div id="movie" style="width:400px; height:150px; ">
+        	<input type="button" value="RECOVER" onCLick="readCache();"/>
+            <p></p>
+        </div>
+    
+        <div id="subtitle" style="width:400px; height:150px; ">
+            <p></p>
+        </div>
+        
+        <div id="status" style=" width:400px; height:100px;">
+            <p id="statusText" style="font-size:10px"></p>
+            <p id="movieFileName" style="font-size:10px"></p>
+            <p id="subtitleFileName" style="font-size:10px"></p>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="app.js"></script>
+<script>
+//document.getElementById('btnSpinner').onclick = function()
+//{
+//    
+//};
+
+</script>
+</html>
