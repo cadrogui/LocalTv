@@ -2,7 +2,8 @@
 ---
 ![LocalTV Main Screen](http://legalintelligence.cl/localtv/home.png)
 ![LocalTV Movie Screen](http://legalintelligence.cl/localtv/movie.png)
-
+![LocalTV Burning subtitle Screen](http://legalintelligence.cl/localtv/burning.png)
+![LocalTV Streaming Screen](http://legalintelligence.cl/localtv/streaming.png)
 
 This code uses node-airplay to srteam to appleTV, and ffmpeg (at the moment you must have installed ffmpeg in /usr/bin/) to burn subtitle track without re-encode the video file
 
@@ -20,7 +21,6 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 #### Instructions to use:
 * Drag the movie to the "Movie" section (only .mp4 files)
 * Drag the Subtitle to the "Subtile" section (only .srt files)
-* You can download the beta from [Here](http://legalintelligence.cl/localtv/LocalTV.zip)
 
-![LocalTV Movie Screen](http://legalintelligence.cl/localtv/burning.png)
-![LocalTV Movie Screen](http://legalintelligence.cl/localtv/streaming.png)
+#### You can download the beta from [Here](http://legalintelligence.cl/localtv/LocalTV.zip)
+
