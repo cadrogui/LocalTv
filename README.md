@@ -24,6 +24,6 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 
 #### You can download the beta from [Here](http://legalintelligence.cl/localtv/LocalTV.zip)
 
-#### LocalTV on my AppleTV
+#### LocalTV streaming to my AppleTV
 
 ![LocalTV Streaming Screen](http://legalintelligence.cl/localtv/cap.png)
