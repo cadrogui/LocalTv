@@ -4,81 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>LocalTV</title>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-
-<style>
-@font-face {
-    font-family: BondoluoPeek;
-    src: url(font/BondoluoPeek.ttf);
-}
-
-#localTV{
-	width:400px; height:400px; background:url(img/gui.png);
-}
-
-body{
-	margin-top:0;
-	margin-left:0;
-}
-
-#spinner{
-	position:absolute; margin-left:10px; margin-top:10px; width:30px; z-index:2; display:none
-}
-
-#spinnerCover{
-	position:absolute; margin-left:108px; margin-top:175px; width:50px; z-index:2; display:none
-}
-
-#streamingScr{
-	position:absolute; z-index:3; display:none;
-}
-
-.movieSubText{
-	font-size:10px;
-	color:#FFF;
-}
-
-#movieCoverGUI{
-	width:267px;
-	height:391px;
-	position:absolute; margin-left:3px; margin-top:4px
-}
-
-#okMovie{
-	position:absolute; margin-left:325px; margin-top: 60px;
-}
-
-#movie{
-	width:400px; height:160px;
-}
-
-#movieInfo{
-	width:255px;
-	height:390px;
-	position:absolute; 
-	z-index:3; 
-	margin-left:10px;
-	margin-top:5px;
-	background:#000;
-	background: rgba(0, 0, 0, 0.5);
-}
-
-#movieInfo{
-	margin-left:6px; color:#FFF; font-family:BondoluoPeek; display:none
-}
-
-#subtitle{
-	width:400px; height:160px;
-}
-
-#okSubtitle{
-	position:absolute; margin-left:325px; margin-top: 50px
-}
-
-#status{
-	width:125px; height:80px; margin-left:275px;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="css/style.css" />
 
 </head>
 <body>
@@ -106,6 +32,8 @@ body{
         </div>
         
         <div id="status" onclick="requestStream();">
+        	<img id="iconAirplayStatus" src="img/iconAirplayRed.png" style="margin-top:15px; margin-left:40px" />
+            
             <p id="statusText" style="font-size:10px"></p>
             <p id="movieFileName" class="movieSubText"></p>
             <p id="subtitleFileName" class="movieSubText"></p>

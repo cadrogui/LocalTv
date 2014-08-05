@@ -25,10 +25,8 @@ var sourceSize;
 var tmpFileSize;
 
 var portServer = 1337;
-var ipServer = "127.0.0.1";
+var ipServer = "192.168.0.100";
 var devices = [];
-
-console.log('Discovering atv');
 
 browser.on( 'deviceOn', function( device ) {
 	devices.push(device);
@@ -57,7 +55,8 @@ function render(fileSource, subtitleSource){
 		if(exists) fs.unlink(tmpFile)
 	});
 	
-	var ffmpeg = spawn('/usr/bin/ffmpeg', [
+//	var ffmpeg = spawn('/usr/bin/ffmpeg', [
+	var ffmpeg = spawn(path.dirname(process.execPath) + '/ffmpeg', [
 		'-i', fileSource,
 		'-sub_charenc', 'CP1252',
 		'-i', subtitleSource,
@@ -80,6 +79,7 @@ function render(fileSource, subtitleSource){
 			console.log('Burning subtitle finished');
 			//initServer();
 			startStream();
+			statusCounter = 0;
 		}
 	})
 
@@ -141,11 +141,42 @@ function startStream(){
 	
 	var stat = fs.statSync(tmpFile);
 	tmpFileSize = stat.size;	
-				
-	devices[0].play('http://192.168.0.100:'+portServer, 0, function(status){
-		console.info(status, 'Playing video');
-	});
+	
+	if(devices.length > 0){
+	
+		devices.forEach(function(device){
+			console.log(device);
+			device.play('http://'+ipServer+':'+portServer, 0, function(status){
+				console.info(status, 'Playing video');
+			});
+		});			
 
+	}else{
+		message('no AppleTV Found');
+	}
+}
+
+var timer;
+
+function AirplayStatus(){
+	console.log('Discovering atv');
+
+	if(devices.length > 0){
+		console.log('AppleTV Found');
+		document.getElementById('iconAirplayStatus').src = 'img/iconAirplayGreen.png'
+		clearInterval(timer);
+	}else if(devices.length === 0){
+		document.getElementById('iconAirplayStatus').src = 'img/iconAirplayRed.png'	
+	
+		timer = setInterval(function(){
+			AirplayStatus();
+		}, 2000);
+		
+	}
+}
+
+function message(m){
+	console.log(m);
 }
 
 var dropMovie;
@@ -223,11 +254,15 @@ function dropSubtitleFile(e){
 	document.getElementById('okSubtitle').src = "img/ok.png";
 }
 
+var statusCounter = 0;
+
 function requestStream(){
-//	if(total == 2){
+	if(statusCounter == 0){
 		render(MovieFile, SubtitleFile);	
-//		total = 0;	
-//	}
+		statusCounter = statusCounter + 1;	
+	}else if(statusCounter > 0){
+		console.log('task already proccesing');
+	}
 }
 
 var infoMovie = false;
@@ -243,3 +278,4 @@ function showInfoMovie(){
 }
 
 initServer();
+AirplayStatus();

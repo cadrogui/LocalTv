@@ -2,13 +2,14 @@
   "name": "LocalTV",
   "main": "index.html",
   "window": {
+	"icon": "img/icon.png",
     "show": true,
     "position": "center",
     "width": 400,
     "height": 400,
     "toolbar": false,
 	"frame": true,
-    "always-on-top": true	,
+    "always-on-top": true,
 	"resizable": false,
 	"fullscreen": false
   }
