@@ -24,6 +24,9 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 
 #### You can download the beta from [Here](http://legalintelligence.cl/localtv/LocalTV.zip) (Last Updated: 04/08/2014 - 22:10)
 
+#### Known Issues
+* LocalTV airplay icon always stay red, thats meens LocalTV didnt found a atv device, the issue is caused by a blocking connection in your mac, sometimes the PF Firewall causes that, you can manage with this app [IceFloor](http://www.hanynet.com/icefloor/), turn off the PF Firewall and thats all.
+
 #### LocalTV streaming to my AppleTV
 
 ![LocalTV Streaming Screen](http://legalintelligence.cl/localtv/cap.png)
