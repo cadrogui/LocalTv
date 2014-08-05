@@ -1,6 +1,3 @@
-var fileSource = './source.mp4';
-var subtitleSource = './source.srt';
-
 var http = require('http'),
 	fs = require('fs'),
 	util = require('util'),
@@ -8,8 +5,8 @@ var http = require('http'),
 	spawn = require('child_process').spawn,
 	airplay = require('airplay-js'),
 	path = require('path'),
-	request = require('request');
-//	gui = require('nw.gui');	
+	request = require('request'),
+	gui = require('nw.gui');	
 
 var coverUrl;
 
@@ -25,8 +22,15 @@ var sourceSize;
 var tmpFileSize;
 
 var portServer = 1337;
-var ipServer = "192.168.0.100";
+var ipServer;
+//var ipServer = "192.168.0.100";
+
 var devices = [];
+var ip = [];
+
+var mb = new gui.Menu({type:"menubar"});
+mb.createMacBuiltin("LocalTV");
+gui.Window.get().menu = mb;
 
 browser.on( 'deviceOn', function( device ) {
 	devices.push(device);
@@ -37,6 +41,16 @@ browser.on( 'error', function( error ) {
 	console.log(error);
 	document.getElementById('status').innerHTML = error
 });
+
+require('dns').lookup(require('os').hostname(), function (err, add, fam) {
+	console.log('addr: '+add);
+	ipServer = add;
+
+//	var rx = /(?:\d)+/g;
+//	ip = add.match(rx);
+//	ip = ip[0] + "." + ip[1] + "." + ip[2] + "." + parseInt(ip[3]) + 1;
+//	console.log(ip);
+})
 
 function render(fileSource, subtitleSource){
 	console.log('Starting LocalTV');
@@ -55,8 +69,8 @@ function render(fileSource, subtitleSource){
 		if(exists) fs.unlink(tmpFile)
 	});
 	
-//	var ffmpeg = spawn('/usr/bin/ffmpeg', [
-	var ffmpeg = spawn(path.dirname(process.execPath) + '/ffmpeg', [
+	var ffmpeg = spawn('/usr/bin/ffmpeg', [
+//	var ffmpeg = spawn(path.dirname(process.execPath) + '/ffmpeg', [
 		'-i', fileSource,
 		'-sub_charenc', 'CP1252',
 		'-i', subtitleSource,
