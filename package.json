@@ -10,7 +10,7 @@
     "toolbar": true,
 	"frame": true,
     "always-on-top": true,
-	"resizable": false,
+	"resizable": true,
 	"fullscreen": false
   }
 }
