@@ -268,15 +268,7 @@ var dropSubtitle;
 var MovieFile;
 var SubtitleFile;
 
-var total = 0;
-
-
 var root = document.documentElement
-
-root.ondragover = function(event){
-	event.preventDefault && event.preventDefault();
-//	console.log(event.target.id);
-}
 
 root.ondrop = function(event){
 	event.preventDefault && event.preventDefault();
@@ -312,27 +304,12 @@ root.ondragover = function(event){
 	}
 }
 
-//dropMovie = document.getElementById('movie');
-//dropMovie.addEventListener("dragenter", dragEnterMovieFile, false);
-//dropMovie.addEventListener("dragover", dragOverMovieFile, false);
-//dropMovie.addEventListener("drop", dropMovieFile, false);
-//
-//dropSubtitle = document.getElementById('subtitle');
-//dropSubtitle.addEventListener("dragenter", dragEnterSubtitleFile, false);
-//dropSubtitle.addEventListener("dragover", dragOverSubtitleFile, false);
-//dropSubtitle.addEventListener("drop", dropSubtitleFile, false);
-//
 function dragEnterMovieFile(e){
 	e.stopPropagation();
  	e.preventDefault();
 	document.getElementById('okMovie').src = '';
 }
-//
-//function dragOverMovieFile(e){
-//	e.stopPropagation();
-// 	e.preventDefault();
-//}
-//
+
 function dropMovieFile(e){
 	e.stopPropagation();
  	e.preventDefault();
@@ -393,12 +370,7 @@ function dragEnterSubtitleFile(e){
  	e.preventDefault();
 	document.getElementById('okSubtitle').src = '';
 }
-//
-//function dragOverSubtitleFile(e){
-//	e.stopPropagation();
-// 	e.preventDefault();
-//}
-//
+
 function dropSubtitleFile(e){
 	e.stopPropagation();
  	e.preventDefault();
@@ -414,13 +386,6 @@ function requestStream(){
 		render(MovieFile, SubtitleFile);
 		rendering = true;
 	}
-	
-//	if(statusCounter == 0){
-//		render(MovieFile, SubtitleFile);	
-//		statusCounter = statusCounter + 1;	
-//	}else if(statusCounter > 0){
-//		console.log('task already proccesing');
-//	}
 }
 
 var infoMovie = false;
