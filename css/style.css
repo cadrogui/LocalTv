@@ -1,15 +1,18 @@
+body{
+	margin-top:0;
+	margin-left:0;
+}
+
 @font-face {
     font-family: BondoluoPeek;
     src: url(../font/BondoluoPeek.ttf);
 }
 
 #localTV{
-	width:400px; height:400px; background:url(../img/gui.png);
-}
-
-body{
-	margin-top:0;
-	margin-left:0;
+	width:400px; 
+	height:400px; 
+	background:url(../img/gui.png);
+	position:fixed;
 }
 
 #spinner{
@@ -51,27 +54,34 @@ body{
 
 #okMovie{
 	position:absolute; 
-	margin-left:325px; 
+	margin-left:45px; 
 	margin-top: 60px;
 }
 
+.clear{
+	clear:both;
+}
+
 #movie{
-	width:400px; 
-	height:160px;
+	width:123px; 
+	height:150px;
+	margin-top:3px;
+	margin-right:3px;
+	float:right;
 }
 
 #movieInfo{
 	width:255px;
 	height:390px;
 	position:absolute; 
-	z-index:3; 
+	z-index:30; 
 	margin-left:10px;
 	margin-top:5px;
-	background:#000;
-	background: rgba(0, 0, 0, 0.5);
+	background:#F00;
+	/*background: rgba(0, 0, 0, 0.5);*/
 }
 
-#movieInfo{
+#movieInfo p{
 	margin-left:6px; 
 	color:#FFF; 
 	font-family:BondoluoPeek; 
@@ -79,18 +89,33 @@ body{
 }
 
 #subtitle{
-	width:400px; 
-	height:160px;
+	width:123px; 
+	height:150px;
+	float:right;
+	margin-top:5px;
+	margin-right:3px;
 }
 
 #okSubtitle{
 	position:absolute; 
-	margin-left:325px; 
-	margin-top: 50px
+	margin-left:45px; 
+	margin-top: 50px;
 }
 
 #status{
 	width:125px; 
 	height:80px; 
 	margin-left:275px;
+}
+
+#iconAirplayStatus{
+	margin-top:25px; 
+	margin-left:40px
+}
+
+#main{
+	position: absolute;
+	z-index: 0;
+	width: 400px;
+	height: 394px;
 }

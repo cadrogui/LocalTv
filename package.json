@@ -1,7 +1,20 @@
 {
   "name": "LocalTV",
+  "version": "0.1.9",
+  "description": "Send movie files directly to an AppleTV with subtitle support, resume and playlist to see tv series, via Airplay",
   "main": "index.html",
-  "window": {
+  "keywords": [
+  	"Airlplay",
+	"AppleTV"
+  ],
+  "author":"Mikel Carozzi",
+  "dependencies": {
+    "airplay-js": "^0.2.2",
+    "path": "^0.4.9",
+	"util":"^0.10.3",
+	"request": "^2.40.0"
+  },
+    "window": {
 	"icon": "img/icon.png",
     "show": true,
     "position": "center",
@@ -10,7 +23,7 @@
     "toolbar": true,
 	"frame": true,
     "always-on-top": true,
-	"resizable": true,
+	"resizable": false,
 	"fullscreen": false
   }
 }

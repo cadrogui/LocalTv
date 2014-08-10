@@ -3,11 +3,15 @@ var http = require('http'),
 	util = require('util'),
 	OS = require('os'),
 	spawn = require('child_process').spawn,
-	airplay = require('airplay2'),
+	airplay = require('airplay-js'),
 	path = require('path'),
 	request = require('request'),
-	gui = require('nw.gui');	
+	gui = require('nw.gui');
 
+process.on('uncaughtException', function(err) {
+  console.log('Caught exception: ' + err);
+});
+	
 var coverUrl;
 
 var regex = /(.+?)\W?(\d{4})/g;
@@ -41,7 +45,7 @@ gui.Window.get().menu = mb;
 
 browser.on( 'deviceOn', function( device ) {
 	devices.push(device);
-	console.log(devices);
+//	console.log(devices, 'atv data founds');
 });
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -64,72 +68,72 @@ function fileHash(fileName){
 	});
 }
 
+var hasRequested = false;
+
+var DEBUG = true;
+
+//FIX multiple playback request
 
 function render(fileSource, subtitleSource){
-	console.log('Burning Subtitle');
 	
-	if(typeof hashTempFIle === 'undefined'){
+	if(typeof hashTempFIle === 'undefined' && typeof lastPosition != 'undefined'){
 		
-		rendering = true;
-		
-		fileL = path.basename(fileSource);
-
-//		console.log(fileL.match(regex), 'REGEX');
-		
-		document.getElementById('spinner').style.display = "block";
+		if(hasRequested == false){
 			
-		var stat = fs.statSync(fileSource);
-		sourceSize = stat.size;
-			
-		fs.exists(tmpFile, function(exists){
-			if(exists) fs.unlink(tmpFile)
-		});
-		
-	//	var ffmpeg = spawn('/usr/bin/ffmpeg', [
-		var ffmpeg = spawn(path.dirname(process.execPath) + '/ffmpeg', [
-			'-i', fileSource,
-			'-sub_charenc', 'CP1252',
-			'-i', subtitleSource,
-			'-map', '0:v',
-			'-map', '0:a',
-			'-c', 'copy',
-			'-map', '1',
-			'-c:s:0', 'mov_text',
-			'-metadata:s:s:0', 'language=esp',
-			tmpFile
-		]); 
-		
-		ffmpeg.stderr.pipe(process.stdout);
+			hasRequested = true;
 					
-		ffmpeg.on('close', function(code){
-			if(code == 0){
-				document.getElementById('spinner').style.display = "none";
-				document.getElementById('streamingScr').style.display = "block";
+			console.log('Burning Subtitle');
+					
+			fileL = path.basename(fileSource);
+					
+			document.getElementById('spinner').style.display = "block";
 				
-				console.log('Burning subtitle finished');
-				startStream();
-				statusCounter = 0;
+			var stat = fs.statSync(fileSource);
+			sourceSize = stat.size;
 				
-				rendering = false;
-			}
-		})
-	
-		ffmpeg.on('error', function(error){
-			console.log(error, 'ffmpeg error');
-		});
-
-	
+			fs.exists(tmpFile, function(exists){
+				if(exists) fs.unlink(tmpFile)
+			});
+			
+		//	var ffmpeg = spawn('/usr/bin/ffmpeg', [
+			var ffmpeg = spawn(path.dirname(process.execPath) + '/ffmpeg', [
+				'-i', fileSource,
+				'-sub_charenc', 'CP1252',
+				'-i', subtitleSource,
+				'-map', '0:v',
+				'-map', '0:a',
+				'-c', 'copy',
+				'-map', '1',
+				'-c:s:0', 'mov_text',
+				'-metadata:s:s:0', 'language=esp',
+				tmpFile
+			]); 
+			
+			ffmpeg.stderr.pipe(process.stdout);
+						
+			ffmpeg.on('close', function(code){
+				if(code == 0){
+					document.getElementById('spinner').style.display = "none";
+					document.getElementById('streamingScr').style.display = "block";
+					
+					console.log('Burning subtitle finished');
+					startStream();
+					
+					hasRequested = false;		
+				}
+			})
+		
+			ffmpeg.on('error', function(error){
+				console.log(error, 'ffmpeg error');
+			});
+		}
+		
 	}else{
+		console.log('Direct Stream');
 		startStream();
 	}
 		
 
-}
-
-function readCache(){
-	console.log('Reading Cached File');
-	document.getElementById('streamingScr').style.display = "block";
-	startStream();
 }
 
 function initServer(){
@@ -140,6 +144,11 @@ function initServer(){
 		var path = tmpFile;
 		var stat = fs.statSync(path);
 		var total = stat.size;
+		
+		req.on("close", function() {
+			document.getElementById('streamingScr').style.display = "none";	
+			streamStatus();
+		});
 		
 		if (req.headers['range']) {
 			var range = req.headers.range;
@@ -160,27 +169,12 @@ function initServer(){
 			res.writeHead(200, { 'Content-Length': total, 'Content-Type': 'video/mp4' });
 			fs.createReadStream(path).pipe(res);			
 		}
+		
 						
 	}).listen(portServer, ipServer, function(){
 		console.log('HTTP Server Started');
 	});
-
-//	server.on('connection',function(socket){
-//		socket.__fd=socket.fd;
-//		connected_users[socket.__fd]=socket.remoteAddress;
-//				
-//		socket.on('close',function(){
-//			delete connected_users[socket.__fd];
-//			console.log(socket.remoteAddress, 'desconectado del atv');
-//		}); 
-//
-//		socket.on('clientError',function(err){
-//			console.log(err, 'error en el cliente');
-//		}); 
-//		
-//	});	
 }
-
 
 function startStream(){	
 	console.log('Streaming to AppleTV');
@@ -199,42 +193,42 @@ function startStream(){
 			}else{
 				postion = 0;
 			}
-			
-			console.log(position, 'position del stream');
-			
+						
 			device.play('http://'+ipServer+':'+portServer, position, function(status){
-				console.info(status, 'Playing video');
-				streamStatus();
+				console.info(status, 'Playing video');				
+				
+				if(DEBUG === true) console.info(status.body, 'body request play');
+				
 				fileHash(tmpFile);
 			});
 			
-//			device.status(function(s){
-//				console.log(s, 'status device');
-////				if(typeof s != 'undefined'){
-////					document.getElementById('streamingScr').style.display = "none";
-////				}
-//			})
 		});			
 
 	}else{
 		message('no AppleTV Found');
 	}
 }
+
 var looping = true;
 
+//FIX
+
 function AirplayStatus(){
+
 	if(looping == true){
 		setTimeout(function(){
 			console.log(looping, 'Discovering atv');
 			
 			if(devices.length > 0){
 				console.log('AppleTV Found');
-	//			console.log(devices);
+				
+				if(DEBUG === true)console.log(devices);
+				
 				document.getElementById('iconAirplayStatus').src = 'img/iconAirplayGreen.png'
 				//clearInterval(timer);
 				looping = false;
 			}else if(devices.length === 0){
-				document.getElementById('iconAirplayStatus').src = 'img/iconAirplayRed.png'	
+//				document.getElementById('iconAirplayStatus').src = 'img/iconAirplayRed.png'	
 			}
 			process.nextTick(AirplayStatus);
 		}, 1000);
@@ -242,19 +236,25 @@ function AirplayStatus(){
 }
 
 function streamStatus(){
-	setTimeout(function(){
-		devices[0].status(function(s){
-			if(typeof s === 'undefined'){
-				document.getElementById('streamingScr').style.display = "none";
-			}else{
-				document.getElementById('streamingScr').style.display = "block";
+	if(DEBUG === true) console.log('straemStatus init');
+	
+	devices[0].status(function(s){
+		
+		if(DEBUG === true) console.warn(s, 'streamStatus')
+		
+		if(typeof s === 'undefined'){
+			document.getElementById('streamingScr').style.display = "none";	
+		}else{
+			document.getElementById('streamingScr').style.display = "block";
+			
+			if(lastPosition >= s.position){
 				lastPosition = s.position;
 				totalDuration = s.duration;
 			}
-			//console.log(s, 'status device');
-		})
-		process.nextTick(streamStatus);
-	}, 2000);
+			
+			if(DEBUG === true) console.log(lastPosition, 'streamStatus running');
+		}
+	})
 }
 
 
@@ -268,9 +268,9 @@ var dropSubtitle;
 var MovieFile;
 var SubtitleFile;
 
-var root = document.documentElement
+var doc = document.documentElement
 
-root.ondrop = function(event){
+doc.ondrop = function(event){
 	event.preventDefault && event.preventDefault();
 	
 	elId = event.target.id;
@@ -285,10 +285,13 @@ root.ondrop = function(event){
 			dropSubtitleFile(event);
 		break;
 		
+		default:
+			doNothing(event);
+		
 	}
 }
 
-root.ondragover = function(event){
+doc.ondragover = function(event){
 	elId = event.target.id;
 	
 	switch(elId){
@@ -300,9 +303,17 @@ root.ondragover = function(event){
 		case('subtitle'):
 			dragEnterSubtitleFile(event);
 		break;
-		
+	
+		default:
+			doNothing(event);
 	}
 }
+
+function doNothing(e){
+	e.stopPropagation();
+ 	e.preventDefault();
+}
+
 
 function dragEnterMovieFile(e){
 	e.stopPropagation();
@@ -322,34 +333,41 @@ function dropMovieFile(e){
 	
 	var str = path.basename(MovieFile);
 	arrMovieName = str.match(regex);
-		
+
+	// FIX Homeland.S03E02 no year
+	
 	MovieName = arrMovieName[0].replace(/\./g, ' ');
 	
 	MovieName = MovieName.match(regex2);
 			
 	fs.exists(tmpDir + arrMovieName[0] + ".jpg", function(exists){
 		if(exists){
-			console.log('existe el file');
 			document.getElementById('okMovie').src = 'img/ok.png';	
 			document.getElementById('movieCoverGUI').src = tmpDir + arrMovieName[0] + ".jpg"	
 		}else{
-
 			document.getElementById('spinnerCover').style.display = "block"
 			
 			request({url:"http://www.omdbapi.com", qs:{t:MovieName.join(' ')}}, function(err, response, body) {
-				if(err) { console.log(err); return; }
+				if(err) { 
+					console.log(err); 
+					return; 
+				}
+				
 				var json = JSON.parse(body)
 		//		console.log(body, 'body response moviedb');
+				
+				if(json.Poster === 'N/A'){
+					document.getElementById('movieCoverGUI').src = "img/noCover.png";
+					document.getElementById('spinnerCover').style.display = "none"
+					document.getElementById('okMovie').src = 'img/ok.png';
+				}else{
 		
-				document.getElementById('movieCoverGUI').src = json.Poster
-				document.getElementById('director').innerHTML = json.Director
-				document.getElementById('writer').innerHTML = json.Writer
-				document.getElementById('plot').innerHTML = json.Plot
-				
-				document.getElementById('spinnerCover').style.display = "none"
-				document.getElementById('okMovie').src = 'img/ok.png';
-				
-				saveCover(json.Poster, arrMovieName[0]);
+					document.getElementById('movieCoverGUI').src = json.Poster					
+					document.getElementById('spinnerCover').style.display = "none"
+					document.getElementById('okMovie').src = 'img/ok.png';
+					
+					saveCover(json.Poster, arrMovieName[0]);
+				}
 			});
 		}
 	});
@@ -363,7 +381,6 @@ function saveCover(url, movieFileName){
 	  response.pipe(cover);
 	});
 }
-
 
 function dragEnterSubtitleFile(e){
 	e.stopPropagation();
@@ -379,26 +396,12 @@ function dropSubtitleFile(e){
 	document.getElementById('okSubtitle').src = "img/ok.png";
 }
 
-var statusCounter = 0;
-
 function requestStream(){
-	if(rendering == false){
-		render(MovieFile, SubtitleFile);
-		rendering = true;
-	}
-}
-
-var infoMovie = false;
-
-function showInfoMovie(){
-	if(infoMovie == false){
-		document.getElementById('movieInfo').style.display = 'block'
-		infoMovie = true;
-	}else{
-		document.getElementById('movieInfo').style.display = 'none'
-		infoMovie = false;
-	}
+	console.log('requesting stream');
+	render(MovieFile, SubtitleFile);
 }
 
 initServer();
 AirplayStatus();
+
+//streamStatus();

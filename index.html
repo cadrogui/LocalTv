@@ -15,24 +15,22 @@
     <img id="spinnerCover" src="img/spinner.gif" />
     <img id="streamingScr" src="img/streaming.png" />
     <img id="movieCoverGUI" src="img/defaultCover.png" onclick="showInfoMovie();" />
-
-    <div id="movieInfo" onclick="showInfoMovie();">
-        <p><label>Director: </label><label id="director"></label></p>
-        <p><label>Writer: </label><label id="writer"></label></p>
-        <p><label>Plot: </label><label id="plot"></label></p>
-    </div>
     
-    <div style="position:absolute; z-index:0;">
+    <div id="main">
         <div id="movie">
             <img id="okMovie" src="" />
         </div>
-    
-        <div id="subtitle">
+    	
+        <div class="clear"></div>
+        
+      <div id="subtitle">
             <img id="okSubtitle" src="" />
         </div>
         
-        <div id="status" onclick="requestStream();">
-        	<img id="iconAirplayStatus" src="img/iconAirplayRed.png" style="margin-top:15px; margin-left:40px" />
+        <div class="clear"></div>
+        
+      <div id="status" onclick="requestStream();">
+        	<img id="iconAirplayStatus" src="img/iconAirplayRed.png" />
             
             <p id="statusText" style="font-size:10px"></p>
             <p id="movieFileName" class="movieSubText"></p>
@@ -40,14 +38,7 @@
         </div>
     </div>
 </div>
-
 </body>
 
 <script src="js/app.js"></script>
-<script>
-//document.getElementById('btnSpinner').onclick = function()
-//{
-//    
-//};
-</script>
 </html>
