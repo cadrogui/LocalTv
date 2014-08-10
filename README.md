@@ -22,7 +22,17 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 * Drag the movie to the "Movie" section (only .mp4 files)
 * Drag the Subtitle to the "Subtile" section (only .srt files)
 
-#### You can download the beta from [Here](http://legalintelligence.cl/localtv/LocalTV.zip) (Last Updated: 05/08/2014 - 17:20)
+#### You can download the STABLE Release from [Here](http://legalintelligence.cl/localtv/LocalTV.zip) (Last Updated: 10/08/2014 - 13:57)
+
+#### Changelog
+* 09/08/2014
+* First Stable realease
+* Bugs fixes (ip server, drag files on diferent area cause crash, uncaught error handle)
+* Add resume playback, when the streams go out or when you stop the stream on your atv
+* Playlist for see tv shows has started to develop
+
+* 09/08/2014
+* Bug Fixes
 
 #### Known Issues
 * LocalTV airplay icon always stay red, thats meens LocalTV didnt found a atv device, the issue is caused by a blocking connection in your mac, sometimes the PF Firewall causes that, you can manage with this app [IceFloor](http://www.hanynet.com/icefloor/), turn off the PF Firewall and thats all.
