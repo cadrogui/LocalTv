@@ -10,9 +10,9 @@ This code uses node-airplay to srteam to appleTV, and ffmpeg ~~(at the moment yo
 
 The app only support *.mp4 files and *.srt for subtitles, the app has a poster download feature. (in my roadmap i hope develop a autodownload subtitle file for spanish users)
 
-~~At this time, the code is inmature to release a stable version, and no have a GUI, but the core is ready, im working fast as i can.~~~
+~~At this time, the code is inmature to release a stable version, and no have a GUI, but the core is ready, im working fast as i can.~~
 
-Now i have a beta release only for Mac OSX, ive tested this app on my MacBoock Pro with Mavericks, and works really fine, i have an issue when i stream large movies, 1 hour or more, but it has by my router, cause this has no sreaming capabilies, my router is an linksys with a DDWRT, i recommend a 5ghz band router.
+Now i have a beta release only for Mac OSX, ive tested this app on my MacBoock Pro with Mavericks, and works really fine, ~~i have an issue when i stream large movies, 1 hour or more, but it has by my router, cause this has no sreaming capabilies, my router is an linksys with a DDWRT, i recommend a 5ghz band router.~~
 
 For the code of the file server i used the code of Paolo Rossi, you can look it [Here](https://gist.github.com/paolorossi/1993068). I want do some modifications in the near future, to adapt better to my code, and extend some functionalities.
 
