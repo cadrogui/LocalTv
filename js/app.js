@@ -5,8 +5,12 @@ var http = require('http'),
 	spawn = require('child_process').spawn,
 	airplay = require('airplay-js'),
 	path = require('path'),
-	request = require('request'),
+	request = require('request')
+	ua = require('universal-analytics'),
 	gui = require('nw.gui');
+
+var ga = ua('UA-53741907-1');
+ga.pageview("/").send()
 
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' + err);
@@ -267,7 +271,6 @@ var airplayStatusLoop = true;
 
 (function updateTV(){
 	request({url:"https://raw.githubusercontent.com/cadrogui/LocalTv/master/package.json"}, function(err, response, body) { 
-		
 		
 		if(err){
 			console.error(err, 'updateTV')
