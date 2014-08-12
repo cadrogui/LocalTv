@@ -39,13 +39,15 @@ var hashTempFIle;
 
 var rendering = false;
 
+var STATUS_INTERVAL = 300000;
+
 var mb = new gui.Menu({type:"menubar"});
 mb.createMacBuiltin("LocalTV");
 gui.Window.get().menu = mb;
 
 browser.on( 'deviceOn', function( device ) {
 	devices.push(device);
-//	console.log(devices, 'atv data founds');
+	console.log(devices, 'atv data found');
 });
 
 require('dns').lookup(require('os').hostname(), function (err, add, fam) {
@@ -82,7 +84,7 @@ function render(fileSource, subtitleSource){
 			
 			hasRequested = true;
 					
-			console.log('Burning Subtitle');
+			console.log('Adding Subtitle');
 					
 			fileL = path.basename(fileSource);
 					
@@ -132,11 +134,9 @@ function render(fileSource, subtitleSource){
 		console.log('Direct Stream');
 		startStream();
 	}
-		
-
 }
 
-function initServer(){
+(function initServer(){
 	console.log('Starting HTTP server');
 	
 	var server = http.createServer(function (req, res) {
@@ -147,7 +147,6 @@ function initServer(){
 		
 		req.on("close", function() {
 			document.getElementById('streamingScr').style.display = "none";	
-			streamStatus();
 		});
 		
 		if (req.headers['range']) {
@@ -174,10 +173,10 @@ function initServer(){
 	}).listen(portServer, ipServer, function(){
 		console.log('HTTP Server Started');
 	});
-}
+})();
 
 function startStream(){	
-	console.log('Streaming to AppleTV');
+	console.log('Streaming to AppleTV with position: ' + lastPosition);
 	var position;
 	
 	var stat = fs.statSync(tmpFile);
@@ -188,7 +187,7 @@ function startStream(){
 		devices.forEach(function(device){
 			console.log(device);
 			
-			if(lastPosition){
+			if(lastPosition > 0){
 				position = lastPosition/totalDuration;
 			}else{
 				postion = 0;
@@ -209,54 +208,98 @@ function startStream(){
 	}
 }
 
-var looping = true;
+var airplayStatusLoop = true;
 
-//FIX
+(function AirplayStatus(){	
 
-function AirplayStatus(){
-
-	if(looping == true){
-		setTimeout(function(){
-			console.log(looping, 'Discovering atv');
-			
-			if(devices.length > 0){
-				console.log('AppleTV Found');
+	if(airplayStatusLoop == true){
+		process.nextTick(function(){
+			setTimeout(function(){
+				console.log('Discovering atv');
 				
-				if(DEBUG === true)console.log(devices);
+				if(devices.length > 0){
+					
+					if(DEBUG === true)
+						console.log('AppleTV Found');
+						console.log(devices);					
+					
+					document.getElementById('iconAirplayStatus').src = 'img/iconAirplayGreen.png'
+					airplayStatusLoop = false;
+				}else{
+					console.log('No atv');
+				}
 				
-				document.getElementById('iconAirplayStatus').src = 'img/iconAirplayGreen.png'
-				//clearInterval(timer);
-				looping = false;
-			}else if(devices.length === 0){
-//				document.getElementById('iconAirplayStatus').src = 'img/iconAirplayRed.png'	
-			}
-			process.nextTick(AirplayStatus);
-		}, 1000);
+				process.nextTick(AirplayStatus);
+				
+			}, 2000);	
+		});
 	}
-}
+})();
 
-function streamStatus(){
+(function streamStatus(){
 	if(DEBUG === true) console.log('straemStatus init');
 	
-	devices[0].status(function(s){
-		
-		if(DEBUG === true) console.warn(s, 'streamStatus')
-		
-		if(typeof s === 'undefined'){
-			document.getElementById('streamingScr').style.display = "none";	
-		}else{
-			document.getElementById('streamingScr').style.display = "block";
-			
-			if(lastPosition >= s.position){
-				lastPosition = s.position;
-				totalDuration = s.duration;
-			}
-			
-			if(DEBUG === true) console.log(lastPosition, 'streamStatus running');
-		}
-	})
-}
+	process.nextTick(function(){
+		setTimeout(function(){
 
+			devices[0].status(function(s){
+						
+				if(typeof s === 'undefined'){
+					document.getElementById('streamingScr').style.display = "none";	
+				}else{
+					document.getElementById('streamingScr').style.display = "block";
+								
+					if(typeof s.position != 'undefined')
+						lastPosition = s.position;
+						totalDuration = s.duration
+						
+					if(DEBUG === true) 
+						console.log(lastPosition, 'last position stream') 
+						console.log(s);
+				}
+			})
+
+		process.nextTick(streamStatus);
+		
+		}, STATUS_INTERVAL);
+	});
+})();
+
+(function updateTV(){
+	request({url:"https://raw.githubusercontent.com/cadrogui/LocalTv/master/package.json"}, function(err, response, body) { 
+		
+		
+		if(err){
+			console.error(err, 'updateTV')
+		}else{
+			var localVersion;
+			var netVersion;
+			var jsonPackage;
+			var json = JSON.parse(body);
+			
+			netVersion = json.version;
+			
+			fs.readFile('package.json', function(err, data){
+				jsonPackage = JSON.parse(data);
+				localVersion = jsonPackage.version
+							
+				if(DEBUG === true) 
+					console.log(localVersion, 'local version');
+					console.log(netVersion, 'github version');
+					console.info(jsonPackage, 'info package');
+				
+				if(localVersion != netVersion){
+					var scrGUI = document.getElementById('movieCoverGUI');
+					scrGUI.src = 'img/newVersion.png';
+					scrGUI.style.cursor = 'pointer';
+					scrGUI.onclick = function(){
+						gui.Shell.openExternal('https://github.com/cadrogui/LocalTv');
+					}
+				}			
+			});			
+		}
+	});
+})();
 
 function message(m){
 	console.log(m);
@@ -314,7 +357,6 @@ function doNothing(e){
  	e.preventDefault();
 }
 
-
 function dragEnterMovieFile(e){
 	e.stopPropagation();
  	e.preventDefault();
@@ -351,22 +393,25 @@ function dropMovieFile(e){
 				if(err) { 
 					console.log(err); 
 					return; 
-				}
-				
-				var json = JSON.parse(body)
-		//		console.log(body, 'body response moviedb');
-				
-				if(json.Poster === 'N/A'){
-					document.getElementById('movieCoverGUI').src = "img/noCover.png";
-					document.getElementById('spinnerCover').style.display = "none"
-					document.getElementById('okMovie').src = 'img/ok.png';
 				}else{
-		
-					document.getElementById('movieCoverGUI').src = json.Poster					
-					document.getElementById('spinnerCover').style.display = "none"
-					document.getElementById('okMovie').src = 'img/ok.png';
+				
+					var json = JSON.parse(body)
 					
-					saveCover(json.Poster, arrMovieName[0]);
+					if(DEBUG === true) console.log(body, 'body response moviedb');
+					
+					if(json.Poster === 'N/A'){
+						document.getElementById('movieCoverGUI').src = "img/noCover.png";
+						document.getElementById('spinnerCover').style.display = "none"
+						document.getElementById('okMovie').src = 'img/ok.png';
+					}else{
+			
+						document.getElementById('movieCoverGUI').src = json.Poster					
+						document.getElementById('spinnerCover').style.display = "none"
+						document.getElementById('okMovie').src = 'img/ok.png';
+						
+						saveCover(json.Poster, arrMovieName[0]);
+					}
+				
 				}
 			});
 		}
@@ -374,7 +419,7 @@ function dropMovieFile(e){
 }
 
 function saveCover(url, movieFileName){
-	console.log('saving cover to hdd');
+	if(DEBUG === true) console.log('saving cover to hdd');
 	
 	var cover = fs.createWriteStream(tmpDir + movieFileName +".jpg");
 	var request = http.get(url, function(response) {
@@ -400,8 +445,3 @@ function requestStream(){
 	console.log('requesting stream');
 	render(MovieFile, SubtitleFile);
 }
-
-initServer();
-AirplayStatus();
-
-//streamStatus();

@@ -49,7 +49,8 @@ body{
 	height:391px;
 	position:absolute; 
 	margin-left:3px; 
-	margin-top:4px
+	margin-top:4px;
+	z-index:1;
 }
 
 #okMovie{
@@ -105,6 +106,7 @@ body{
 #status{
 	width:125px; 
 	height:80px; 
+	margin-top:5px;
 	margin-left:275px;
 }
 
