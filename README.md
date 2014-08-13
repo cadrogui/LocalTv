@@ -23,7 +23,7 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 * Drag the movie to the "Movie" section (only .mp4 files)
 * Drag the Subtitle to the "Subtile" section (only .srt files)
 
-#### You can download the STABLE Release from [Here](http://legalintelligence.cl/localtv/LocalTV_0.2.1.dmg) (Last Updated: 12/08/2014 - 14:39)
+#### You can download the STABLE Release from [Here](http://legalintelligence.cl/localtv/LocalTV_0.2.2.dmg) (Last Updated: 13/08/2014 - 10:55)
 
 #### Changelog
 * 09/08/2014
@@ -41,6 +41,10 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 
 * 12/08/2014
 * Add analytics
+
+* 13/08/2014
+* Bug Fix movie poster fetch
+* Add Rotten Tomatoes API Service as secondary movie poster system.
 
 #### Known Issues
 * LocalTV airplay icon always stay red, thats meens LocalTV didnt found a atv device, the issue is caused by a blocking connection in your mac, sometimes the PF Firewall causes that, you can manage with this app [IceFloor](http://www.hanynet.com/icefloor/), turn off the PF Firewall and thats all.
