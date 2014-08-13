@@ -7,7 +7,10 @@ var http = require('http'),
 	path = require('path'),
 	request = require('request')
 	ua = require('universal-analytics'),
-	gui = require('nw.gui');
+	gui = require('nw.gui'),
+	movie = require('tomatoes');
+
+var movieInfo = movie('g5yppvzs3vn3f56ccgvxqs4f');
 
 var ga = ua('UA-53741907-1');
 ga.pageview("/").send()
@@ -379,43 +382,78 @@ function dropMovieFile(e){
 	MovieName = arrMovieName[0].replace(/\./g, ' ');
 	
 	MovieName = MovieName.match(regex2);
+	
+	var coverUrl;
 			
 	fs.exists(tmpDir + arrMovieName[0] + ".jpg", function(exists){
 		if(exists){
 			document.getElementById('okMovie').src = 'img/ok.png';	
 			document.getElementById('movieCoverGUI').src = tmpDir + arrMovieName[0] + ".jpg"	
 		}else{
-			document.getElementById('spinnerCover').style.display = "block"
+			document.getElementById('spinnerCover').style.display = "block"			
 			
-			request({url:"http://www.omdbapi.com", qs:{t:MovieName.join(' ')}}, function(err, response, body) {
-				if(err) { 
-					console.log(err); 
-					return; 
-				}else{
-				
-					var json = JSON.parse(body)
+			getPosterImbd(MovieName, arrMovieName[0])	
 					
-					if(DEBUG === true) 
-						console.log(body, 'body response moviedb');
-						console.log(MovieName, 'movie name');
-					
-					if(json.Poster === 'N/A' || json.Response === 'False'){
-						document.getElementById('movieCoverGUI').src = "img/noCover.png";
-						document.getElementById('spinnerCover').style.display = "none"
-						document.getElementById('okMovie').src = 'img/ok.png';												
-					}else{
-			
-						document.getElementById('movieCoverGUI').src = json.Poster					
-						document.getElementById('spinnerCover').style.display = "none"
-						document.getElementById('okMovie').src = 'img/ok.png';
-						
-						saveCover(json.Poster, arrMovieName[0]);
-					}
-				
-				}
-			});
 		}
 	});
+}
+
+// FIX > 1 array
+
+function getPosterTomatoes(movieName, filename){
+	movieInfo.search(movieName.join(' '), function(error, results){
+		console.log(results, 'tomatoes');
+		console.log(error, 'tomatoes error');		
+		
+		if(typeof results[0] != 'undefined'){
+			coverUrl = results[0].posters.original.replace('tmb', 'ori');
+			
+			document.getElementById('spinnerCover').style.display = "none"
+			document.getElementById('movieCoverGUI').src = coverUrl
+			
+			saveCover(results[0].posters.original.replace('tmb', 'ori'), filename);
+		}else{
+			noPoster();
+		}
+	});
+}
+
+
+function getPosterImbd(movieName, filename){
+	request({url:"http://www.omdbapi.com", qs:{t:movieName.join(' ')}}, function(err, response, body) {
+		
+		if(err) { 
+			console.log(err); 
+			return; 
+		}else{
+		
+			var json = JSON.parse(body)
+			
+			if(DEBUG === true) 
+				console.log(json, 'body moviedb');
+			
+			if(json.Poster === 'N/A' || json.Response === 'False'){
+				console.log('no poster found in imdb');
+
+				getPosterTomatoes(movieName, filename)
+				
+			}else{
+				
+				document.getElementById('spinnerCover').style.display = "none"
+				document.getElementById('movieCoverGUI').src = json.Poster					
+				document.getElementById('okMovie').src = 'img/ok.png';
+				
+				saveCover(json.Poster, filename);
+			}
+		
+		}
+	});
+}
+
+function noPoster(){
+	document.getElementById('movieCoverGUI').src = "img/noCover.png";
+	document.getElementById('spinnerCover').style.display = "none"
+	document.getElementById('okMovie').src = 'img/ok.png';												
 }
 
 function saveCover(url, movieFileName){
