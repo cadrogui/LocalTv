@@ -6,7 +6,7 @@
 ![LocalTV Streaming Screen](http://legalintelligence.cl/localtv/streaming.png)
 ![LocalTV Update Screen](http://legalintelligence.cl/localtv/update.png)
 
-This code uses node-airplay to srteam to appleTV, and ffmpeg ~~(at the moment you must have installed ffmpeg in /usr/bin/)~~ to burn subtitle track without re-encode the video file, ~~you can download a ffmpeg binary from [Here](http://www.evermeet.cx/ffmpeg/ffmpeg-2.3.1.7z)~~
+This code uses node-airplay to stream to appleTV, and ffmpeg ~~(at the moment you must have installed ffmpeg in /usr/bin/)~~ to burn subtitle track without re-encode the video file, ~~you can download a ffmpeg binary from [Here](http://www.evermeet.cx/ffmpeg/ffmpeg-2.3.1.7z)~~
 
 The app only support *.mp4 files and *.srt for subtitles, the app has a poster download feature. (in my roadmap i hope develop a autodownload subtitle file for spanish users)
 
@@ -23,7 +23,7 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 * Drag the movie to the "Movie" section (only .mp4 files)
 * Drag the Subtitle to the "Subtile" section (only .srt files)
 
-#### You can download the STABLE Release from [Here](http://legalintelligence.cl/localtv/LocalTV.dmg) (Last Updated: 11/08/2014 - 21:19)
+#### You can download the STABLE Release from [Here](http://legalintelligence.cl/localtv/LocalTV_0.2.1.dmg) (Last Updated: 12/08/2014 - 14:39)
 
 #### Changelog
 * 09/08/2014
@@ -38,6 +38,9 @@ For the code of the file server i used the code of Paolo Rossi, you can look it 
 * Bug fix at resume playback feature
 * Add no poster screen
 * Stability bug fixes
+
+* 12/08/2014
+* Add analytics
 
 #### Known Issues
 * LocalTV airplay icon always stay red, thats meens LocalTV didnt found a atv device, the issue is caused by a blocking connection in your mac, sometimes the PF Firewall causes that, you can manage with this app [IceFloor](http://www.hanynet.com/icefloor/), turn off the PF Firewall and thats all.
