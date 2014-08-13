@@ -24,7 +24,7 @@
     "position": "center",
     "width": 400,
     "height": 400,
-    "toolbar": false,
+    "toolbar": true,
 	"frame": true,
     "always-on-top": true,
 	"resizable": false,

@@ -16,8 +16,6 @@ process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' + err);
 });
 	
-var coverUrl;
-
 var regex = /(.+?)\W?(\d{4})/g;
 var regex2 = /([a-zA-Z]+)/g;
 
@@ -48,7 +46,7 @@ var STATUS_INTERVAL = 300000;
 var mb = new gui.Menu({type:"menubar"});
 mb.createMacBuiltin("LocalTV");
 gui.Window.get().menu = mb;
-
+	
 browser.on( 'deviceOn', function( device ) {
 	devices.push(device);
 	console.log(devices, 'atv data found');
@@ -68,9 +66,7 @@ function fileHash(fileName){
 	});
 	
 	s.on('end', function() {	  
-	  hashTempFIle = shasum.digest('hex')
-	  
-	 // console.log(hashTempFIle, 'Hash temp file');
+	  hashTempFIle = shasum.digest('hex')  
 	});
 }
 
@@ -101,7 +97,6 @@ function render(fileSource, subtitleSource){
 				if(exists) fs.unlink(tmpFile)
 			});
 			
-		//	var ffmpeg = spawn('/usr/bin/ffmpeg', [
 			var ffmpeg = spawn(path.dirname(process.execPath) + '/ffmpeg', [
 				'-i', fileSource,
 				'-sub_charenc', 'CP1252',
@@ -400,12 +395,14 @@ function dropMovieFile(e){
 				
 					var json = JSON.parse(body)
 					
-					if(DEBUG === true) console.log(body, 'body response moviedb');
+					if(DEBUG === true) 
+						console.log(body, 'body response moviedb');
+						console.log(MovieName, 'movie name');
 					
-					if(json.Poster === 'N/A'){
+					if(json.Poster === 'N/A' || json.Response === 'False'){
 						document.getElementById('movieCoverGUI').src = "img/noCover.png";
 						document.getElementById('spinnerCover').style.display = "none"
-						document.getElementById('okMovie').src = 'img/ok.png';
+						document.getElementById('okMovie').src = 'img/ok.png';												
 					}else{
 			
 						document.getElementById('movieCoverGUI').src = json.Poster					
