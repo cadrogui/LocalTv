@@ -16,7 +16,7 @@
     "path": "^0.4.9",
 	"util":"^0.10.3",
 	"request": "^2.40.0",
-	"universal-analytics": "^0.3.4",
+	"universal-analytics": "^0.4.21",
 	"tomatoes": "^0.0.1"
   },
     "window": {
